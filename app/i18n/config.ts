@@ -9,7 +9,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   ko: "한국어",
 }
 
-export const defaultLocale: Locale = 'en'
+export const defaultLocale: Locale = 'zh-CN'
 
 export const i18n = {
   locales,
