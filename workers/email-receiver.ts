@@ -4,7 +4,7 @@ import { messages, emails, webhooks } from '../app/lib/schema'
 import { eq, sql } from 'drizzle-orm'
 import PostalMime from 'postal-mime'
 import { WEBHOOK_CONFIG } from '../app/config/webhook'
-import { EmailMessage } from '../app/lib/webhook'
+import { EmailMessage, WebhookPayload, callWebhook } from '../app/lib/webhook'
 
 const handleEmail = async (message: ForwardableEmailMessage, env: Env) => {
   const db = drizzle(env.DB, { schema: { messages, emails, webhooks } })
@@ -38,23 +38,25 @@ const handleEmail = async (message: ForwardableEmailMessage, env: Env) => {
 
     if (webhook?.enabled) {
       try {
-        await fetch(webhook.url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Webhook-Event': WEBHOOK_CONFIG.EVENTS.NEW_MESSAGE
-          },
-          body: JSON.stringify({
-            emailId: targetEmail.id,
-            messageId: savedMessage.id,
-            fromAddress: savedMessage.fromAddress,
-            subject: savedMessage.subject,
-            content: savedMessage.content,
-            html: savedMessage.html,
-            receivedAt: savedMessage.receivedAt.toISOString(),
-            toAddress: targetEmail.address
-          } as EmailMessage)
-        })
+        const emailPayload: EmailMessage = {
+          emailId: targetEmail.id,
+          messageId: savedMessage.id,
+          fromAddress: savedMessage.fromAddress,
+          subject: savedMessage.subject,
+          content: savedMessage.content,
+          html: savedMessage.html,
+          receivedAt: savedMessage.receivedAt.toLocaleString("zh-CN", {
+            timeZone: "Asia/Shanghai",
+          }),
+          toAddress: targetEmail.address,
+        } as EmailMessage
+
+        const payload: WebhookPayload = {
+          event: WEBHOOK_CONFIG.EVENTS.NEW_MESSAGE,
+          data: emailPayload,
+        }
+
+        await callWebhook(webhook.url, payload)
       } catch (error) {
         console.error('Failed to send webhook:', error)
       }

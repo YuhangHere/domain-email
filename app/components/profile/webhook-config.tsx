@@ -193,14 +193,10 @@ export function WebhookConfig() {
                 <p>{t("docs.exampleBody")}</p>
                 <pre className="bg-background p-2 rounded text-xs overflow-auto">
                   {`{
-  "emailId": "email-uuid",
-  "messageId": "message-uuid",
   "fromAddress": "sender@example.com",
-  "subject": "${t("docs.subject")}",
-  "content": "${t("docs.content")}",
-  "html": "${t("docs.html")}",
-  "receivedAt": "2024-01-01T12:00:00.000Z",
-  "toAddress": "your-email@${window.location.host}"
+  "toAddress": "recipient@example.com"
+  "subject": "Test Email",
+  "receivedAt": "2023/3/1 12:00:00",
 }`}
                 </pre>
               </div>

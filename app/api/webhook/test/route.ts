@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         subject: "Test Email",
         content: "This is a test email.",
         html: "<p>This is a <strong>test</strong> email.</p>",
-        receivedAt: "2023-03-01T12:00:00Z",
+        receivedAt: "2023/3/1 12:00:00",
         toAddress: "recipient@example.com"
       } as EmailMessage
     })
